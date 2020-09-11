@@ -1,0 +1,14 @@
+//@version=4
+study(title="Envelope", shorttitle="Env", overlay=true, resolution="")
+len = input(20, title="Length", minval=1)
+percent = input(10.0)
+src = input(close, title="Source")
+exponential = input(false)
+basis = exponential ? ema(src, len) : sma(src, len)
+k = percent/100.0
+upper = basis * (1 + k)
+lower = basis * (1 - k)
+plot(basis, "Basis", color=#FF6A00)
+u = plot(upper, "Upper", color=#0094FF)
+l = plot(lower, "Lower", color=#0094FF)
+fill(u, l, color=#0094FF, transp=95, title="Background")
