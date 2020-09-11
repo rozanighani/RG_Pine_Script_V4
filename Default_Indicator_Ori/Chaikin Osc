@@ -1,0 +1,7 @@
+//@version=4
+study(title="Chaikin Oscillator", shorttitle="Chaikin Osc", format=format.volume, resolution="")
+short = input(3, minval=1, title="Fast Length")
+long = input(10, minval=1, title="Slow Length")
+osc = ema(accdist, short) - ema(accdist, long)
+plot(osc, title="Chaikin Oscillator", color=#FF8080)
+hline(0, title="Zero", color=#606060, linestyle=hline.style_dashed)
