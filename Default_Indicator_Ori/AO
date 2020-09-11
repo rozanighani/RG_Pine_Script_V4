@@ -1,0 +1,4 @@
+//@version=4
+study(title="Awesome Oscillator", shorttitle="AO", resolution="")
+ao = sma(hl2,5) - sma(hl2,34)
+plot(ao, color = change(ao) <= 0 ? #872323 : #007F0E, style=plot.style_histogram)
