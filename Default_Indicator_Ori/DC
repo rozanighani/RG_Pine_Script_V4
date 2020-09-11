@@ -1,0 +1,10 @@
+//@version=4
+study(title="Donchian Channels", shorttitle="DC", overlay=true, resolution="")
+length = input(20, minval=1)
+lower = lowest(length)
+upper = highest(length)
+basis = avg(upper, lower)
+plot(basis, "Basis", color=#FF6A00)
+u = plot(upper, "Upper", color=#0094FF)
+l = plot(lower, "Lower", color=#0094FF)
+fill(u, l, color=#0094FF, transp=95, title="Background")
