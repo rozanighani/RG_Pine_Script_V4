@@ -1,0 +1,288 @@
+//@version=4
+study("Auto Fib Retracement", overlay=true)
+
+// pivots threshold
+threshold_multiplier = input(title="Deviation", type=input.float, defval=3, minval=0)
+dev_threshold = atr(10) / close * 100 * threshold_multiplier
+
+depth = input(title="Depth", type=input.integer, defval=10, minval=1)
+var extendLeft = input(false, "Extend Lines Left")
+var extendRight = input(true, "Extend Lines Right")
+
+var extending = extend.none
+if extendLeft and extendRight
+    extending := extend.both
+if extendLeft and not extendRight 
+    extending := extend.left
+if not extendLeft and extendRight
+    extending := extend.right
+
+reverse = input(false, "Reverse")
+prices = input(true, "Prices")
+levels = input(true, "Levels")
+levelsFormat = input("Values", "Levels Format", options = ["Values", "Percent"])
+labelsPosition = input("Left", "Labels Position", options = ["Left", "Right"])
+
+var line lineLast = na
+var int iLast = 0
+var int iPrev = 0
+var float pLast = 0
+var isHighLast = false // otherwise the last pivot is a low pivot
+
+pivots(src, length, isHigh) => 
+    l2 = length * 2 
+    c = nz(src[length])
+    ok = true
+    for i = 0 to l2
+        if isHigh and src[i] > c
+            ok := false
+        
+        if not isHigh and src[i] < c
+            ok := false
+    if ok
+        [bar_index[length], c]
+    else
+        [int(na), float(na)]
+[iH, pH] = pivots(high, depth / 2, true)
+[iL, pL] = pivots(low, depth / 2, false)
+
+calc_dev(base_price, price) =>
+    100 * (price - base_price) / price
+    
+pivotFound(dev, isHigh, index, price) => 
+    if isHighLast == isHigh and not na(lineLast)
+        // same direction
+        if isHighLast ? price > pLast : price < pLast
+            line.set_xy2(lineLast, index, price)
+            [lineLast, isHighLast]
+        else
+            [line(na), bool(na)]
+    else // reverse the direction (or create the very first line)
+        if abs(dev) > dev_threshold
+            // price move is significant
+            id = line.new(iLast, pLast, index, price, color=color.gray, width=1, style=line.style_dashed)
+            [id, isHigh]
+        else
+            [line(na), bool(na)]
+            
+if not na(iH)
+    dev = calc_dev(pLast, pH)
+    [id, isHigh] = pivotFound(dev, true, iH, pH)
+    if not na(id)
+        if id != lineLast
+            line.delete(lineLast)
+        lineLast := id
+        isHighLast := isHigh
+        iPrev := iLast
+        iLast := iH
+        pLast := pH
+else
+    if not na(iL)
+        dev = calc_dev(pLast, pL)
+        [id, isHigh] = pivotFound(dev, false, iL, pL)
+        if not na(id)
+            if id != lineLast
+                line.delete(lineLast)
+            lineLast := id
+            isHighLast := isHigh
+            iPrev := iLast
+            iLast := iL
+            pLast := pL
+
+_draw_line(price, col) =>
+    var id = line.new(iLast, price, bar_index, price, color=col, width=1, extend=extending)
+    if not na(lineLast)
+        line.set_xy1(id, line.get_x1(lineLast), price)
+        line.set_xy2(id, line.get_x2(lineLast), price)
+
+
+_draw_label(price, txt, txtColor) =>
+    x = labelsPosition == "Left" ? line.get_x1(lineLast) : line.get_x2(lineLast)
+    var id = label.new(x=x, y=price, text=txt, textcolor=txtColor, style=label.style_none)
+    label.set_xy(id, x, price)
+    label.set_text(id, txt)
+    label.set_textcolor(id, txtColor)
+
+_wrap(txt) =>
+    "(" + tostring(txt, "#.##") + ")"
+
+_label_txt(level, price) =>
+    l = levelsFormat == "Values" ? tostring(level) : tostring(level * 100) + "%"
+    (levels ? l : "") + (prices ? _wrap(price) : "")
+
+_crossing_level(sr, r) =>
+    (r > sr and r < sr[1]) or (r < sr and r > sr[1])
+
+startPrice = reverse ? line.get_y1(lineLast) : pLast
+endPrice = reverse ? pLast : line.get_y1(lineLast)
+
+iHL = startPrice > endPrice
+diff = (iHL ? -1 : 1) * abs(startPrice - endPrice)
+
+level_0 = input(true, "0")
+float m = 0
+r = startPrice + diff * m  
+if level_0
+    _draw_line(r, #787b86)
+    _draw_label(r, _label_txt(m, r), #787b86)
+alertcondition(_crossing_level(close, r), "Autofib 0 crossing!", "Autofib: {{ticker}} crossing level 0.")
+
+level_0236 = input(true, "0.236")
+m := 0.236
+r := startPrice + diff * m
+if level_0236
+    _draw_line(r, #f44336)
+    _draw_label(r, _label_txt(m, r), #f44336)
+alertcondition(_crossing_level(close, r), "Autofib 0.236 crossing!", "Autofib: {{ticker}} crossing level 0.236.")
+
+level_0382 = input(true, "0.382")
+m := 0.382
+r := startPrice + diff * m
+if level_0382
+    _draw_line(r, #81c784)
+    _draw_label(r, _label_txt(m, r), #81c784)
+alertcondition(_crossing_level(close, r), "Autofib 0.382 crossing!", "Autofib: {{ticker}} crossing level 0.382.")
+
+level_05 = input(true, "0.5")
+m := 0.5
+r := startPrice + diff * m
+if level_05
+    _draw_line(r, #4caf50)
+    _draw_label(r, _label_txt(m, r), #4caf50)
+alertcondition(_crossing_level(close, r), "Autofib 0.5 crossing!", "Autofib: {{ticker}} crossing level 0.5.")
+
+level_0618 = input(true, "0.618")
+m := 0.618
+r := startPrice + diff * m
+if level_0618
+    _draw_line(r, #009688)
+    _draw_label(r, _label_txt(m, r), #009688)
+alertcondition(_crossing_level(close, r), "Autofib 0.618 crossing!", "Autofib: {{ticker}} crossing level 0.618.")
+
+level_065 = input(false, "0.65")
+m := 0.65
+r := startPrice + diff * m
+if level_065
+    _draw_line(r, #009688)
+    _draw_label(r, _label_txt(m, r), #009688)
+alertcondition(_crossing_level(close, r), "Autofib 0.65 crossing!", "Autofib: {{ticker}} crossing level 0.65.")
+
+level_0786 = input(true, "0.786")
+m := 0.786
+r := startPrice + diff * m
+if level_0786
+    _draw_line(r, #64b5f6)
+    _draw_label(r, _label_txt(m, r), #64b5f6)
+alertcondition(_crossing_level(close, r), "Autofib 0.786 crossing!", "Autofib: {{ticker}} crossing level 0.786.")
+
+level_1 = input(true, "1")
+m := 1
+r := startPrice + diff * m
+if level_1
+    _draw_line(r, #787b86)
+    _draw_label(r, _label_txt(m, r), #787b86)
+alertcondition(_crossing_level(close, r), "Autofib 1 crossing!", "Autofib: {{ticker}} crossing level 1.")
+
+level_1272 = input(true, "1.272")
+m := 1.272
+r := startPrice + diff * m
+if level_1272
+    _draw_line(r, #81c784)
+    _draw_label(r, _label_txt(m, r), #81c784)
+alertcondition(_crossing_level(close, r), "Autofib 1.272 crossing!", "Autofib: {{ticker}} crossing level 1.272.")
+
+level_1414 = input(true, "1.414")
+m := 1.414
+r := startPrice + diff * m
+if level_1414
+    _draw_line(r, #f44336)
+    _draw_label(r, _label_txt(m, r), #f44336)
+alertcondition(_crossing_level(close, r), "Autofib 1.414 crossing!", "Autofib: {{ticker}} crossing level 1.414.")
+
+level_1618 = input(true, "1.618")
+m := 1.618
+r := startPrice + diff * m
+if level_1618
+    _draw_line(r, #2196f3)
+    _draw_label(r, _label_txt(m, r), #2196f3)
+alertcondition(_crossing_level(close, r), "Autofib 1.618 crossing!", "Autofib: {{ticker}} crossing level 1.618.")
+
+level_165 = input(false, "1.65")
+m := 1.65
+r := startPrice + diff * m
+if level_165
+    _draw_line(r, #2196f3)
+    _draw_label(r, _label_txt(m, r), #2196f3)
+alertcondition(_crossing_level(close, r), "Autofib 1.65 crossing!", "Autofib: {{ticker}} crossing level 1.65.")
+
+level_2618 = input(false, "2.618")
+m := 2.618
+r := startPrice + diff * m
+if level_2618
+    _draw_line(r, #f44336)
+    _draw_label(r, _label_txt(m, r), #f44336)
+alertcondition(_crossing_level(close, r), "Autofib 2.618 crossing!", "Autofib: {{ticker}} crossing level 2.618.")
+
+level_265 = input(false, "2.65")
+m := 2.65
+r := startPrice + diff * m
+if level_265
+    _draw_line(r, #f44336)
+    _draw_label(r, _label_txt(m, r), #f44336)
+alertcondition(_crossing_level(close, r), "Autofib 2.65 crossing!", "Autofib: {{ticker}} crossing level 2.65.")
+
+level_3618 = input(false, "3.618")
+m := 3.618
+r := startPrice + diff * m
+if level_3618
+    _draw_line(r, #9c27b0)
+    _draw_label(r, _label_txt(m, r), #9c27b0)
+alertcondition(_crossing_level(close, r), "Autofib 3.618 crossing!", "Autofib: {{ticker}} crossing level 3.618.")
+
+level_365 = input(false, "3.65")
+m := 3.65
+r := startPrice + diff * m
+if level_365
+    _draw_line(r, #9c27b0)
+    _draw_label(r, _label_txt(m, r), #9c27b0)
+alertcondition(_crossing_level(close, r), "Autofib 3.65 crossing!", "Autofib: {{ticker}} crossing level 3.65.")
+
+level_4236 = input(false, "4.236")
+m := 4.236
+r := startPrice + diff * m
+if level_4236
+    _draw_line(r, #e91e63)
+    _draw_label(r, _label_txt(m, r), #e91e63)
+alertcondition(_crossing_level(close, r), "Autofib 4.236 crossing!", "Autofib: {{ticker}} crossing level 4.236.")
+
+level_n0236 = input(false, "-0.236")
+m := -0.236
+r := startPrice + diff * m
+if level_n0236
+    _draw_line(r, #f44336)
+    _draw_label(r, _label_txt(m, r), #f44336)
+alertcondition(_crossing_level(close, r), "Autofib -0.236 crossing!", "Autofib: {{ticker}} crossing level -0.236.")
+
+level_n0382 = input(false, "-0.382")
+m := -0.382
+r := startPrice + diff * m
+if level_n0382
+    _draw_line(r, #81c784)
+    _draw_label(r, _label_txt(m, r), #81c784)
+alertcondition(_crossing_level(close, r), "Autofib -0.382 crossing!", "Autofib: {{ticker}} crossing level -0.382.")
+
+level_n0618 = input(false, "-0.618")
+m := -0.618
+r := startPrice + diff * m
+if level_n0618
+    _draw_line(r, #009688)
+    _draw_label(r, _label_txt(m, r), #009688)
+alertcondition(_crossing_level(close, r), "Autofib -0.618 crossing!", "Autofib: {{ticker}} crossing level -0.618.")
+
+level_n065 = input(false, "-0.65")
+m := -0.65
+r := startPrice + diff * m
+if level_n065
+    _draw_line(r, #009688)
+    _draw_label(r, _label_txt(m, r), #009688)
+alertcondition(_crossing_level(close, r), "Autofib -0.65 crossing!", "Autofib: {{ticker}} crossing level -0.65.")
