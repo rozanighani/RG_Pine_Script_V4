@@ -1,0 +1,9 @@
+//@version=4
+study(title="Choppiness Index", shorttitle="CHOP", format=format.price, precision=2, resolution="")
+length = input(14, minval=1)
+ci = 100 * log10(sum(atr(1), length) / (highest(length) - lowest(length))) / log10(length)
+offset = input(0, "Offset", type = input.integer, minval = -500, maxval = 500)
+plot(ci, "CHOP", color=#3A6CA8, offset = offset)
+band1 = hline(61.8, "Upper Band", color=#C0C0C0, linestyle=hline.style_dashed)
+band0 = hline(38.2, "Lower Band", color=#C0C0C0, linestyle=hline.style_dashed)
+fill(band1, band0, color = #996B19, title = "Background")
