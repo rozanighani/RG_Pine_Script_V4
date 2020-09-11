@@ -1,0 +1,7 @@
+//@version=4
+study(title="McGinley Dynamic", overlay=true, resolution="")
+length = input(14, minval=1)
+source = close
+mg = 0.0
+mg := na(mg[1]) ? ema(source, length) : mg[1] + (source - mg[1]) / (length * pow(source/mg[1], 4))
+plot(mg)
