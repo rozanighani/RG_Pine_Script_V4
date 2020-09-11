@@ -1,0 +1,7 @@
+//@version=4
+study(title="Klinger Oscillator", format=format.volume, resolution="")
+sv = change(hlc3) >= 0 ? volume : -volume
+kvo = ema(sv, 34) - ema(sv, 55)
+sig = ema(kvo, 13)
+plot(kvo)
+plot(sig, color = color.green)
