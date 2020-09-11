@@ -1,0 +1,8 @@
+//@version=4
+study(title = "Coppock Curve", resolution="")
+wmaLength = input(title="WMA Length", type=input.integer, defval=10)
+longRoCLength = input(title="Long RoC Length", type=input.integer, defval=14)
+shortRoCLength = input(title="Short RoC Length", type=input.integer, defval=11)
+source = close
+curve = wma(roc(source, longRoCLength) + roc(source, shortRoCLength), wmaLength)
+plot(curve)
