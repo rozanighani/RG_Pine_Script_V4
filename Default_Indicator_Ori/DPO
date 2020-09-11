@@ -1,0 +1,9 @@
+//@version=4
+study(title="Detrended Price Oscillator", shorttitle="DPO", format=format.price, precision=2, resolution="")
+period_ = input(21, title="Period", minval=1)
+isCentered = input(false, title="Centered")
+barsback = period_/2 + 1
+ma = sma(close, period_)
+dpo = isCentered ? close[barsback] - ma : close - ma[barsback]
+plot(dpo, offset = isCentered ? -barsback : 0, title="Detrended Price Oscillator", color=#C0C000)
+hline(0, title="Zero Line", color = #C0C0C0)
