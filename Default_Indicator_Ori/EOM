@@ -1,0 +1,6 @@
+//@version=4
+study(title="Ease of Movement", shorttitle="EOM", format=format.volume, resolution="")
+length = input(14, minval=1)
+div = input(10000, title="Divisor", minval=1)
+eom = sma(div * change(hl2) * (high - low) / volume, length)
+plot(eom, "EOM", color=#999915)
