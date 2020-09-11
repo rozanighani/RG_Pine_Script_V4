@@ -1,0 +1,7 @@
+//@version=4
+study(title = "Arnaud Legoux Moving Average", shorttitle="ALMA", overlay=true, resolution="")
+source = close
+windowsize = input(title="Window Size", type=input.integer, defval=9)
+offset = input(title="Offset", type=input.float, defval=0.85)
+sigma = input(title="Sigma", type=input.float, defval=6)
+plot(alma(source, windowsize, offset, sigma))
