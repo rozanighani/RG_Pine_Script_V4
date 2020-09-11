@@ -1,0 +1,4 @@
+//@version=4
+study(title="Compare", shorttitle="Compare", overlay=false)
+sym = "AAPL", res = timeframe.period, source = close
+plot(security(sym, res, source), color=color.purple, linewidth=2)
