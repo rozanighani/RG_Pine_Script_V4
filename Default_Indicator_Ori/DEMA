@@ -1,0 +1,8 @@
+//@version=4
+study(title="Double EMA", shorttitle="DEMA", overlay=true, resolution="")
+length = input(9, minval=1)
+src = input(close, title="Source")
+e1 = ema(src, length)
+e2 = ema(e1, length)
+dema = 2 * e1 - e2
+plot(dema, "DEMA", color=#008000)
