@@ -1,0 +1,4 @@
+//@version=4
+study(title="Accumulation/Distribution", shorttitle="Accum/Dist", format=format.volume, overlay=false, resolution="")
+ad = cum(close==high and close==low or high==low ? 0 : ((2*close-low-high)/(high-low))*volume)
+plot(ad, title = "Accumulation/Distribution", color=#999915)
