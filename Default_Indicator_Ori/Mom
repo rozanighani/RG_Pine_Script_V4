@@ -1,0 +1,6 @@
+//@version=4
+study(title="Momentum", shorttitle="Mom", resolution="")
+len = input(10, minval=1, title="Length")
+src = input(close, title="Source")
+mom = src - src[len]
+plot(mom, color=#999915, title="MOM")
