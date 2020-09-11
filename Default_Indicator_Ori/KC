@@ -1,0 +1,21 @@
+//@version=4
+study(title="Keltner Channels", shorttitle="KC", overlay=true, resolution="")
+length = input(20, minval=1)
+mult = input(1.0, "Multiplier")
+src = input(close, title="Source")
+exp = input(true, "exponential")
+BandsStyle = input("true range", options = ["range", "true range"], title="Bands Style")
+esma(source, length)=>
+	s = sma(source, length)
+	e = ema(source, length)
+	exp ? e : s
+ma = esma(src, length)
+range = BandsStyle == "true range" ? tr(true) : high - low
+rangema = rma(range, length)
+upper = ma + rangema * mult
+lower = ma - rangema * mult
+c = color.blue
+u = plot(upper, color=#0094FF, title="Upper")
+plot(ma, color=#0094FF, title="Basis")
+l = plot(lower, color=#0094FF, title="Lower")
+fill(u, l, color=#0094FF, transp=95, title="Background")
