@@ -1,0 +1,6 @@
+//@version=4
+study(title="Elders Force Index", shorttitle="EFI", format=format.volume, resolution="")
+length = input(13, minval=1)
+efi = ema(change(close) * volume, length)
+plot(efi, color=#D66654, title="Elders Force Index")
+hline(0, color=#606060, title="Zero")
