@@ -1,0 +1,7 @@
+//@version=4
+study(title = "Least Squares Moving Average", shorttitle="LSMA", overlay=true, resolution="")
+length = input(title="Length", type=input.integer, defval=25)
+offset = input(title="Offset", type=input.integer, defval=0)
+src = input(close, title="Source")
+lsma = linreg(src, length, offset)
+plot(lsma)
