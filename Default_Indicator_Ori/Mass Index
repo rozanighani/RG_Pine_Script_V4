@@ -1,0 +1,6 @@
+//@version=4
+study(title="Mass Index", format=format.price, precision=2, resolution="")
+length = input(10, minval=1)
+range = high - low
+mi = sum(ema(range, 9) / ema(ema(range, 9), 9), length)
+plot(mi)
