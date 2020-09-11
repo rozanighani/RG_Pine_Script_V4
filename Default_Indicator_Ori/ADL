@@ -1,0 +1,6 @@
+//@version=4
+study(title = "Advance Decline Line", shorttitle="ADL", format=format.price, precision=2)
+sym(s) => security(s, timeframe.period, close)
+difference = (sym("USI:ADVN.NY") - sym("USI:DECL.NY"))/(sym("USI:UNCH.NY") + 1)
+adline = cum(difference > 0 ? sqrt(difference) : -sqrt(-difference))
+plot(adline)
