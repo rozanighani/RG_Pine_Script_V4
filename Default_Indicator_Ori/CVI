@@ -1,0 +1,28 @@
+//@version=4
+study("Cumulative Volume Index", "CVI", format=format.volume)
+NYSE = "NYSE"
+NASDAQ = "NASDAQ"
+AMEX = "AMEX"
+ARCX = "ARCX"
+US = "US Total"
+DJ = "DJ"
+exch = input(NYSE, type = input.string, title="Exchange",
+     options=[NYSE, NASDAQ, AMEX, ARCX, US, DJ])
+adv_ticker =
+     exch == DJ ? "UPVOL.DJ" :
+     exch == US ? "UPVOL.US" :
+     exch == ARCX ? "UPVOL.AX" : 
+     exch == AMEX ? "UPVOL.AM" : 
+     exch == NASDAQ ? "UPVOL.NQ" :
+	 "UPVOL.NY"
+dec_ticker =
+     exch == DJ ? "DNVOL.DJ" :
+     exch == US ? "DNVOL.US" :
+     exch == ARCX ? "DNVOL.AX" :
+     exch == AMEX ? "DNVOL.AM" :
+     exch == NASDAQ ? "DNVOL.NQ" :
+     "DNVOL.NY"
+adv = security(adv_ticker, timeframe.period, close)
+dec = security(dec_ticker, timeframe.period, close)
+cvi = cum(adv - dec)
+plot(cvi)
