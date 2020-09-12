@@ -1,0 +1,7 @@
+//@version=4
+study(title="Smoothed Moving Average", shorttitle="SMMA", overlay=true, resolution="")
+len = input(7, minval=1, title="Length")
+src = input(close, title="Source")
+smma = 0.0
+smma := na(smma[1]) ? sma(src, len) : (smma[1] * (len - 1) + src) / len
+plot(smma, color=color.red)
