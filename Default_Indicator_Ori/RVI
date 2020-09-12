@@ -1,0 +1,13 @@
+//@version=4
+study(title="Relative Volatility Index", shorttitle="RVI", format=format.price, precision=2, resolution="")
+length = input(10, minval=1), src = close
+len = 14
+stddev = stdev(src, length)
+upper = ema(change(src) <= 0 ? 0 : stddev, len)
+lower = ema(change(src) > 0 ? 0 : stddev, len)
+rvi = upper / (upper + lower) * 100
+h0 = hline(80, "Upper Band", color=#C0C0C0)
+h1 = hline(20, "Lower Band", color=#C0C0C0)
+fill(h0, h1, color=#996A15, title="Background")
+offset = input(0, "Offset", type = input.integer, minval = -500, maxval = 500)
+plot(rvi, title="RVI", color=#008000, offset = offset)
