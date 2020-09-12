@@ -1,0 +1,7 @@
+//@version=4
+study(title="Rate Of Change", shorttitle="ROC", format=format.price, precision=2, resolution="")
+length = input(9, minval=1)
+source = input(close, "Source", type = input.source)
+roc = 100 * (source - source[length])/source[length]
+plot(roc, color=#156A99, title="ROC")
+hline(0, color=#C0C0C0, title="Zero Line")
