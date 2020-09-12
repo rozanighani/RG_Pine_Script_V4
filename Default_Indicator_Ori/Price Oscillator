@@ -1,0 +1,14 @@
+//@version=4
+study(title="Price Oscillator", shorttitle="PPO", format=format.price, precision=2, resolution="")
+shortlen=input(10, "Short Length", minval=1)
+longlen=input(21, "Long Length", minval=1)
+src = input(close, title="Source")
+exp = input(false, "exponential")
+esma(source, length)=>
+	s = sma(source, length)
+	e = ema(source, length)
+	exp ? e : s
+short = esma(src, shortlen)
+long = esma(src, longlen)
+po = (short - long)/long*100
+plot(po, color=#159980, title="OSC")
