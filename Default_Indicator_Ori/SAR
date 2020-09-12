@@ -1,0 +1,7 @@
+//@version=4
+study(title="Parabolic SAR", shorttitle="SAR", overlay=true, resolution="")
+start = input(0.02)
+increment = input(0.02)
+maximum = input(0.2, "Max Value")
+out = sar(start, increment, maximum)
+plot(out, "ParabolicSAR", style=plot.style_cross, color=#3A6CA8)
