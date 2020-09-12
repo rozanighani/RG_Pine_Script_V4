@@ -1,0 +1,4 @@
+//@version=4
+study(title="Net Volume", format=format.volume, resolution="")
+nv = sign(change(close)) * volume
+plot(nv, color=color.blue, title="NV")
