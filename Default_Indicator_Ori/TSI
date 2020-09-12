@@ -1,0 +1,16 @@
+//@version=4
+study("True Strength Indicator", shorttitle="TSI", format=format.price, precision=4, resolution="")
+long = input(title="Long Length", type=input.integer, defval=25)
+short = input(title="Short Length", type=input.integer, defval=13)
+signal = input(title="Signal Length", type=input.integer, defval=13)
+price = close
+double_smooth(src, long, short) =>
+	fist_smooth = ema(src, long)
+	ema(fist_smooth, short)
+pc = change(price)
+double_smoothed_pc = double_smooth(pc, long, short)
+double_smoothed_abs_pc = double_smooth(abs(pc), long, short)
+tsi_value = 100 * (double_smoothed_pc / double_smoothed_abs_pc)
+plot(tsi_value, color=#3BB3E4)
+plot(ema(tsi_value, signal), color=#FF006E)
+hline(0, title="Zero")
