@@ -1,0 +1,13 @@
+//@version=4
+study(title="Ultimate Oscillator", shorttitle="UO", format=format.price, precision=2, resolution="")
+length1 = input(7, minval=1), length2 = input(14, minval=1), length3 = input(28, minval=1)
+average(bp, tr_, length) => sum(bp, length) / sum(tr_, length)
+high_ = max(high, close[1])
+low_ = min(low, close[1])
+bp = close - low_
+tr_ = high_ - low_
+avg7 = average(bp, tr_, length1)
+avg14 = average(bp, tr_, length2)
+avg28 = average(bp, tr_, length3)
+out = 100 * (4*avg7 + 2*avg14 + avg28)/7
+plot(out, color=#FF0000, title="Oscillator")
