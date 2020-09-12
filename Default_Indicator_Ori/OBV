@@ -1,0 +1,5 @@
+//@version=4
+study(title="On Balance Volume", shorttitle="OBV", format=format.volume, resolution="")
+src = close
+obv = cum(sign(change(src)) * volume)
+plot(obv, color=#3A6CA8, title="OnBalanceVolume")
