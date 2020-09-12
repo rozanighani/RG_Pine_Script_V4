@@ -1,0 +1,9 @@
+//@version=4
+study(title="SMI Ergodic Indicator", shorttitle="SMII", format=format.price, precision=4, resolution="")
+longlen = input(20, minval=1, title="Long Period")
+shortlen = input(5, minval=1, title="Short Period")
+siglen = input(5, minval=1, title="Signal Line Period")
+erg = tsi(close, shortlen, longlen)
+sig = ema(erg, siglen)
+plot(erg, color=#0094FF, title="SMI")
+plot(sig, color=#FF6A00, title="Signal")
