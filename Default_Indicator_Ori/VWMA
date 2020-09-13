@@ -1,0 +1,7 @@
+//@version=4
+study(title="VWMA", shorttitle="VWMA", overlay=true, resolution="")
+len = input(20, "Length", minval=1)
+src = input(close, "Source", type = input.source)
+ma = vwma(src, len)
+offset = input(0, "Offset", type = input.integer, minval = -500, maxval = 500)
+plot(ma, title="VWMA", color=#3A6CA8, offset = offset)
