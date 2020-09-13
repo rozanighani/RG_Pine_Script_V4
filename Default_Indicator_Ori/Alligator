@@ -1,0 +1,18 @@
+//@version=4
+study(title="Williams Alligator", shorttitle="Alligator", overlay=true, resolution="")
+smma(src, length) =>
+	smma =  0.0
+	smma := na(smma[1]) ? sma(src, length) : (smma[1] * (length - 1) + src) / length
+	smma
+jawLength = input(13, minval=1, title="Jaw Length")
+teethLength = input(8, minval=1, title="Teeth Length")
+lipsLength = input(5, minval=1, title="Lips Length")
+jawOffset = input(8, title="Jaw Offset")
+teethOffset = input(5, title="Teeth Offset")
+lipsOffset = input(3, title="Lips Offset")
+jaw = smma(hl2, jawLength)
+teeth = smma(hl2, teethLength)
+lips = smma(hl2, lipsLength)
+plot(jaw, "Jaw", offset = jawOffset, color=#3BB3E4)
+plot(teeth, "Teeth", offset = teethOffset, color=#FF006E)
+plot(lips, "Lips", offset = lipsOffset, color=#36C711)
