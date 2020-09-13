@@ -1,0 +1,14 @@
+//@version=4
+study("Williams %R", shorttitle="%R", format=format.price, precision=2, resolution="")
+length = input(title="Length", type=input.integer, defval=14)
+src = input(close, "Source", type = input.source)
+_pr(length) =>
+	max = highest(length)
+	min = lowest(length)
+	100 * (src - max) / (max - min)
+percentR = _pr(length)
+obPlot = hline(-20, title="Upper Band", color=#606060)
+hline(-50, title="Middle Level", linestyle=hline.style_dotted, color=#606060)
+osPlot = hline(-80, title="Lower Band", color=#606060)
+fill(obPlot, osPlot, title="Background", color=color.new(#9915ff, 90))
+plot(percentR, title="%R", color=#3A6CA8, transp=0)
